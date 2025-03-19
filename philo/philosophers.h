@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philosophers.h                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: stafpec <stafpec@student.42.fr>            +#+  +:+       +#+        */
+/*   By: tarini <tarini@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/17 20:00:28 by tarini            #+#    #+#             */
-/*   Updated: 2025/03/18 16:46:51 by stafpec          ###   ########.fr       */
+/*   Updated: 2025/03/19 15:40:55 by tarini           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,7 @@ typedef struct s_data
     long time_to_sleep;
     int num_times_each_philosopher_must_eat;
     bool is_dead;
+    unsigned long	start_time;
     pthread_mutex_t *forks;
     pthread_mutex_t mutex;
     t_philo *philosophers;
@@ -60,5 +61,6 @@ void *check_death(void *phi);
 void print_status(t_philo *philo, const char *status, const char *color);
 int is_dead(t_philo *philo, int nb);
 long long timestamp(void);
+void print_status(t_philo *philo, const char *status, const char *color);
 
 #endif
