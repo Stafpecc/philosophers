@@ -14,7 +14,10 @@ INC			    = -I .
 INCLUDEF		= philosophers.h
 
 CFILES          = \
-		main
+		main      \
+		init	  \
+		routine   \
+		utils
 
 SRC				= $(patsubst %, %.c, $(CFILES))
 OBJS			= $(patsubst %.c, .objs/%.o, $(SRC))
@@ -53,6 +56,10 @@ bonus: $(BNAME)
 fsanitize:
 	$(MAKE) CFLAGS="$(CFLAGS) $(CFSIGSEV)"
 
+valgrindmacos:
+	docker build -t philosophers .
+	docker run --rm philosophers
+	docker rm $(docker ps -a -q)
 
 valgrind: $(EXEC_G3)
 		$(MAKE) $(EXEC_G3)
