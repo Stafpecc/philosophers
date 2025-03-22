@@ -11,6 +11,8 @@ EXEC			= exec/philo
 OBJS_DIR		= .objs/
 EXEC_DIR		= exec/
 INC			    = -I .
+TINC			= -I .
+
 INCLUDEF		= philosophers.h
 
 CFILES          = \
@@ -78,6 +80,15 @@ valgrind: $(EXEC_G3)
 		if [ -f $(EXEC) ]; then $(RM) $(EXEC); fi; \
 		echo "$(GREEN)Deleting $(EXEC) completed successfully!$(RESET)"
 
+tests: all $(TOBJS) $(EXEC) | $(EXEC_DIR)
+	echo "$(YELLOW)Compiling tests...$(RESET)"
+	$(CC) $(CFLAGS) $(TINC) -o $(EXEC_DIR)test_philosopher.out $(TOBJS) $(EXEC) $(THREADCFLAGS)
+
+	echo "$(GREEN)Tests compiled successfully! Now running tests...$(RESET)"
+
+	$(EXEC_DIR)test_philosopher.out
+
+	echo "$(GREEN)Tests executed successfully!$(RESET)"
 
 clean:
 	echo "$(RED)Deleting object files...$(RESET)"
@@ -86,7 +97,6 @@ clean:
 		$(RM) massif.out*
 
 	echo "$(GREEN)Deleting object files completed successfully!$(RESET)"
-
 
 fclean: clean
 	echo "$(RED)Deleting $(NAME)...$(RESET)"
@@ -149,6 +159,9 @@ $(EXEC_DIR):
 
 		mkdir -p $(EXEC_DIR)
 
+$(TEST_OBJS_DIR):
+	echo "$(YELLOW)Creating directory $(TEST_OBJS_DIR)...$(RESET)"
+	mkdir -p $(TEST_OBJS_DIR)
 
 #------------------------------------------------------------------------------#
 # 							BUILD RULES										   #
@@ -183,6 +196,9 @@ $(OBJS_DIR)%.o: %.c $(INCLUDEF) | $(OBJS_DIR)
 
 	echo "$(GREEN)$< completed successfully!$(RESET)"
 
+$(TEST_OBJS_DIR)%.o: $(TEST_DIR)%.c $(INCLUDEF) | .test_objs
+	echo "$(PURPLE)Compiling test $<...$(RESET)"
+	$(CC) $(CFLAGS) $(TINC) -c $< -o $@
 
 $(EXEC_G3): $(OBJS) | $(OBJS_DIR)
 	echo "$(PURPLE)Compiling $< with g3...$(RESET)"

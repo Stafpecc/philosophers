@@ -6,7 +6,7 @@
 /*   By: tarini <tarini@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 16:46:20 by stafpec           #+#    #+#             */
-/*   Updated: 2025/03/19 15:42:25 by tarini           ###   ########.fr       */
+/*   Updated: 2025/03/22 20:04:42 by tarini           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,11 +20,12 @@ long long	timestamp(void)
 	return (tv.tv_sec * 1000 + tv.tv_usec / 1000);
 }
 
-long current_time_in_ms()
+long long current_time_in_ms()
 {
-    struct timeval time;
-    gettimeofday(&time, NULL);
-    return ((time.tv_sec * (unsigned long)1000) + (time.tv_usec / 1000));
+    struct timeval tv;
+
+    gettimeofday(&tv, NULL);
+    return (long long)(tv.tv_sec) * 1000 + (tv.tv_usec) / 1000;
 }
 
 static size_t	ft_numlen(int n)
@@ -80,12 +81,12 @@ char	*ft_itoa(int n)
 
 void print_status(t_philo *philo, const char *status, const char *color)
 {
-    pthread_mutex_lock(&philo->data->mutex);
-    char timestamp;
+	long long timestamp_ms;
 
-    timestamp = ft_itoa(current_time_in_ms() - philo->data->start_time);
+    pthread_mutex_lock(&philo->data->mutex);
+    timestamp_ms = current_time_in_ms() - philo->data->start_time;
     if (!philo->data->is_dead)
-        printf("%s%ld philosopher_%d %s%s\n", color, current_time_in_ms(), philo->id + 1, status, RESET);
+        printf("%s%lld %d %s%s\n", color, timestamp_ms, philo->id + 1, status, RESET);
     pthread_mutex_unlock(&philo->data->mutex);
 }
 
