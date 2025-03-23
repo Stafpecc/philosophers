@@ -19,7 +19,8 @@ CFILES          = \
 		main      \
 		init	  \
 		routine   \
-		utils
+		utils	  \
+		dead
 
 SRC				= $(patsubst %, %.c, $(CFILES))
 OBJS			= $(patsubst %.c, .objs/%.o, $(SRC))
@@ -52,8 +53,6 @@ RESET           = \033[0m
 
 
 all: $(NAME)
-
-bonus: $(BNAME)
 
 fsanitize:
 	$(MAKE) CFLAGS="$(CFLAGS) $(CFSIGSEV)"
