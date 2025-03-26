@@ -6,69 +6,40 @@
 /*   By: tarini <tarini@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 16:46:20 by stafpec           #+#    #+#             */
-/*   Updated: 2025/03/23 19:47:02 by tarini           ###   ########.fr       */
+/*   Updated: 2025/03/26 15:02:56 by tarini           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosophers.h"
+
+void	*ret_unlock_null(t_philo *philo)
+{
+	pthread_mutex_unlock(&philo->data->mutex);
+	return (NULL);
+}
+
+void	*lone_philo_routine(t_philo *philo)
+{
+	pthread_mutex_lock(philo->left_fork);
+	print_status(philo, "has taken a fork", BROWN);
+	usleep(philo->data->time_to_die * 1000);
+	print_status(philo, "died", RED);
+	pthread_mutex_unlock(philo->left_fork);
+	return (NULL);
+}
+
+void	unlock_forks(t_philo *philo)
+{
+	pthread_mutex_unlock(philo->left_fork);
+	pthread_mutex_unlock(philo->right_fork);
+}
 
 long long	current_time_in_ms(void)
 {
 	struct timeval	tv;
 
 	gettimeofday(&tv, NULL);
-	return ((long long)(tv.tv_sec) *1000 + (tv.tv_usec) / 1000);
-}
-
-static size_t	ft_numlen(int n)
-{
-	size_t	len;
-
-	len = 0;
-	if (n <= 0)
-		len++;
-	while (n != 0)
-	{
-		n /= 10;
-		len++;
-	}
-	return (len);
-}
-
-void	sign(char *str, unsigned int *num, size_t *start, int n)
-{
-	if (n < 0)
-	{
-		str[0] = '-';
-		*num = -n;
-		*start = 1;
-	}
-	else
-	{
-		*num = n;
-		*start = 0;
-	}
-}
-
-char	*ft_itoa(int n)
-{
-	char			*str;
-	size_t			len;
-	unsigned int	num;
-	size_t			start;
-
-	len = ft_numlen(n);
-	str = calloc((len + 1), sizeof(char));
-	if (!str)
-		return (NULL);
-	sign(str, &num, &start, n);
-	while (len > start)
-	{
-		str[len - 1] = (num % 10) + '0';
-		num /= 10;
-		len--;
-	}
-	return (str);
+	return ((long long)(tv.tv_sec) * 1000 + (tv.tv_usec) / 1000);
 }
 
 void	print_status(t_philo *philo, const char *status, const char *color)

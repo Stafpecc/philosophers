@@ -20,7 +20,9 @@ CFILES          = \
 		init	  \
 		routine   \
 		utils	  \
-		dead
+		dead	  \
+		ft_atoi   \
+		ft_itoa
 
 SRC				= $(patsubst %, %.c, $(CFILES))
 OBJS			= $(patsubst %.c, .objs/%.o, $(SRC))
@@ -36,7 +38,7 @@ RM_DIR			= rm -rf
 CC				= cc
 MAKE			= make
 
-CFLAGS 			= -Wall -Wextra -Werror
+CFLAGS 			= -Wall -Wextra -Werror -g
 CFSIGSEV        = -fsanitize=address
 THREADCFLAGS    = -lpthread
 PURPLE          = \033[1;35m

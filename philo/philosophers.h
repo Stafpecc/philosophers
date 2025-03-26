@@ -6,7 +6,7 @@
 /*   By: tarini <tarini@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/17 20:00:28 by tarini            #+#    #+#             */
-/*   Updated: 2025/03/23 18:06:42 by tarini           ###   ########.fr       */
+/*   Updated: 2025/03/26 15:03:13 by tarini           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,13 +58,15 @@ typedef struct s_data
 void		eat_sleep_routine(t_philo *philo);
 void		*lone_philo_routine(t_philo *philo);
 void		*routine(void *data);
-void		init_data(t_data *data, int argc, char **argv);
-void		free_data(t_data *data);
+int			init_data(t_data *data, int argc, char **argv);
 long long	current_time_in_ms(void);
-void		sign(char *str, unsigned int *num, size_t *start, int n);
 char		*ft_itoa(int n);
 void		print_status(t_philo *philo, const char *status, const char *color);
 int			check_alive(t_philo *philo);
 int			check_dead(t_philo *philo);
+int			ft_atoi(const char *str, int *error);
+void		unlock_forks(t_philo *philo);
+void		*ret_unlock_null(t_philo *philo);
+int			check_and_unlock(t_philo *philo);
 
 #endif
