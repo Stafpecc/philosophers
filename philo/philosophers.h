@@ -6,7 +6,7 @@
 /*   By: tarini <tarini@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/17 20:00:28 by tarini            #+#    #+#             */
-/*   Updated: 2025/03/26 15:03:13 by tarini           ###   ########.fr       */
+/*   Updated: 2025/03/26 21:07:21 by tarini           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,6 @@ void		*lone_philo_routine(t_philo *philo);
 void		*routine(void *data);
 int			init_data(t_data *data, int argc, char **argv);
 long long	current_time_in_ms(void);
-char		*ft_itoa(int n);
 void		print_status(t_philo *philo, const char *status, const char *color);
 int			check_alive(t_philo *philo);
 int			check_dead(t_philo *philo);
@@ -68,5 +67,6 @@ int			ft_atoi(const char *str, int *error);
 void		unlock_forks(t_philo *philo);
 void		*ret_unlock_null(t_philo *philo);
 int			check_and_unlock(t_philo *philo);
+void		*ret_lone_philo(t_philo *philo);
 
 #endif

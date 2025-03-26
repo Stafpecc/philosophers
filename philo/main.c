@@ -6,11 +6,28 @@
 /*   By: tarini <tarini@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/17 16:48:05 by tarini            #+#    #+#             */
-/*   Updated: 2025/03/26 14:59:42 by tarini           ###   ########.fr       */
+/*   Updated: 2025/03/26 21:07:25 by tarini           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosophers.h"
+
+static void	print_menu(void)
+{
+	printf("%s<time_to_die> <time_to_eat> \
+<time_to_sleep>%s ", GREEN, RESET);
+	printf("%s[<number_of_times_each_philosopher_must_eat>]%s\n", ORANGE, RESET);
+	printf("\n%s<number_of_philosophers>%s	: Number of philosophers \
+(1-200)\n", BLUE, RESET);
+	printf("\n%s<time_to_die>%s			: Time before a philosopher dies \
+(ms, > 0)\n", GREEN, RESET);
+	printf("%s<time_to_eat>%s			: Time a philosopher takes to eat \
+(ms, > 0)\n", GREEN, RESET);
+	printf("%s<time_to_sleep>%s			: Time a philosopher sleeps \
+(ms, > 0)\n", GREEN, RESET);
+	printf("\n%s[<meals_required>]%s		: (Optional) Number of meals before \
+stopping\n", ORANGE, RESET);
+}
 
 static void	free_data(t_data *data)
 {
@@ -23,6 +40,7 @@ static void	free_data(t_data *data)
 		i++;
 	}
 	pthread_mutex_destroy(&data->mutex);
+	free(data->philosophers_dead);
 	free(data->philosophers);
 	free(data->forks);
 }
@@ -58,20 +76,24 @@ int	main(int argc, char **argv)
 
 	if (argc < 5 || argc > 6)
 	{
-		printf("Usage: %s number_of_philosophers time_to_die time_to_eat \
-		time_to_sleep [number_of_times_each_philosopher_must_eat]\n", argv[0]);
+		printf("%sUsage: %s %s%s\
+<number_of_philosophers>%s ", RED, argv[0], RESET, BLUE, RESET);
+		print_menu();
 		return (EXIT_FAILURE);
 	}
 	if (init_data(&data, argc, argv) == EXIT_FAILURE)
 	{
-		printf("Error: invalid arguments\n");
+		printf("%sError: invalid arguments%s\n", RED, RESET);
 		return (EXIT_FAILURE);
 	}
+	free(data.philosophers_dead);
 	data.philosophers_dead = malloc(sizeof(bool) * data.num_philosophers);
 	if (!data.philosophers_dead)
+	{
+		free_data(&data);
 		return (EXIT_FAILURE);
+	}
 	main_helper(&data);
-	free(data.philosophers_dead);
 	free_data(&data);
 	return (EXIT_SUCCESS);
 }
