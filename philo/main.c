@@ -6,7 +6,7 @@
 /*   By: tarini <tarini@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/17 16:48:05 by tarini            #+#    #+#             */
-/*   Updated: 2025/03/26 21:07:25 by tarini           ###   ########.fr       */
+/*   Updated: 2025/03/28 19:15:49 by tarini           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,8 @@ static void	print_menu(void)
 {
 	printf("%s<time_to_die> <time_to_eat> \
 <time_to_sleep>%s ", GREEN, RESET);
-	printf("%s[<number_of_times_each_philosopher_must_eat>]%s\n", ORANGE, RESET);
+	printf("%s[<number_of_times_each_philosopher_must_eat\
+>]%s\n", ORANGE, RESET);
 	printf("\n%s<number_of_philosophers>%s	: Number of philosophers \
 (1-200)\n", BLUE, RESET);
 	printf("\n%s<time_to_die>%s			: Time before a philosopher dies \
@@ -25,27 +26,30 @@ static void	print_menu(void)
 (ms, > 0)\n", GREEN, RESET);
 	printf("%s<time_to_sleep>%s			: Time a philosopher sleeps \
 (ms, > 0)\n", GREEN, RESET);
-	printf("\n%s[<meals_required>]%s		: (Optional) Number of meals before \
-stopping\n", ORANGE, RESET);
+	printf("\n%s[<meals_required>]%s		: (Optional) Number of meals \
+before stopping\n", ORANGE, RESET);
 }
 
 static void	free_data(t_data *data)
 {
 	int	i;
 
+	if (!data)
+		return ;
 	i = 0;
-	while (i < data->num_philosophers)
+	while (data->forks && i < data->num_philosophers)
 	{
 		pthread_mutex_destroy(&data->forks[i]);
 		i++;
 	}
+	free(data->forks);
 	pthread_mutex_destroy(&data->mutex);
+	pthread_mutex_destroy(&data->death_mutex);
 	free(data->philosophers_dead);
 	free(data->philosophers);
-	free(data->forks);
 }
 
-static void	main_helper(t_data *data)
+static int	main_helper(t_data *data)
 {
 	int	i;
 
@@ -68,6 +72,7 @@ static void	main_helper(t_data *data)
 		pthread_join(data->philosophers[i].thread, NULL);
 		i++;
 	}
+	return (EXIT_SUCCESS);
 }
 
 int	main(int argc, char **argv)
@@ -93,7 +98,8 @@ int	main(int argc, char **argv)
 		free_data(&data);
 		return (EXIT_FAILURE);
 	}
-	main_helper(&data);
+	if (main_helper(&data) == EXIT_FAILURE)
+		return (EXIT_FAILURE);
 	free_data(&data);
 	return (EXIT_SUCCESS);
 }

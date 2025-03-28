@@ -6,26 +6,11 @@
 /*   By: tarini <tarini@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/23 15:41:47 by tarini            #+#    #+#             */
-/*   Updated: 2025/03/26 19:15:13 by tarini           ###   ########.fr       */
+/*   Updated: 2025/03/28 19:16:31 by tarini           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosophers.h"
-
-int	check_and_unlock(t_philo *philo)
-{
-	if (check_dead(philo))
-	{
-		unlock_forks(philo);
-		return (1);
-	}
-	if (!check_alive(philo))
-	{
-		unlock_forks(philo);
-		return (1);
-	}
-	return (0);
-}
 
 int	check_alive(t_philo *philo)
 {
@@ -54,21 +39,12 @@ int	check_alive(t_philo *philo)
 
 int	check_dead(t_philo *philo)
 {
-	int	i;
+	int	dead;
 
 	pthread_mutex_lock(&philo->data->death_mutex);
-	i = 0;
-	while (i < philo->data->num_philosophers)
-	{
-		if (philo->data->philosophers_dead[i])
-		{
-			pthread_mutex_unlock(&philo->data->death_mutex);
-			return (1);
-		}
-		i++;
-	}
+	dead = philo->data->is_dead;
 	pthread_mutex_unlock(&philo->data->death_mutex);
-	return (0);
+	return (dead);
 }
 
 void	*lone_philo_routine(t_philo *philo)

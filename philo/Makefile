@@ -16,12 +16,13 @@ TINC			= -I .
 INCLUDEF		= philosophers.h
 
 CFILES          = \
-		main      \
-		init	  \
-		routine   \
-		utils	  \
-		dead	  \
-		ft_atoi
+		main      			\
+		init	  			\
+		routine   			\
+		utils	  			\
+		dead	  			\
+		ft_atoi	  			\
+		check_and_unlock
 
 SRC				= $(patsubst %, %.c, $(CFILES))
 OBJS			= $(patsubst %.c, .objs/%.o, $(SRC))

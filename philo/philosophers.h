@@ -6,9 +6,17 @@
 /*   By: tarini <tarini@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/17 20:00:28 by tarini            #+#    #+#             */
-/*   Updated: 2025/03/26 21:07:21 by tarini           ###   ########.fr       */
+/*   Updated: 2025/03/28 19:15:59 by tarini           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
+//  ______     ___   ___      ________      __           ______      
+// /_____/\   /__/\ /__/\    /_______/\    /_/\         /_____/\              //
+// \:::_ \ \  \::\ \\  \ \   \__.::._\/    \:\ \        \:::_ \ \    		  //
+//  \:(_) \ \  \::\/_\ .\ \     \::\ \      \:\ \        \:\ \ \ \    		  //
+//   \: ___\/   \:: ___::\ \    _\::\ \__    \:\ \____    \:\ \ \ \   		  //
+//    \ \ \      \: \ \\::\ \  /__\::\__/\    \:\/___/\    \:\_\ \ \  		  //
+//     \_\/       \__\/ \::\/  \________\/     \_____\/     \_____\/  	 	  //
 
 #ifndef PHILOSOPHERS_H
 # define PHILOSOPHERS_H
@@ -55,18 +63,42 @@ typedef struct s_data
 	bool			*philosophers_dead;
 }	t_data;
 
-void		eat_sleep_routine(t_philo *philo);
-void		*lone_philo_routine(t_philo *philo);
-void		*routine(void *data);
-int			init_data(t_data *data, int argc, char **argv);
-long long	current_time_in_ms(void);
-void		print_status(t_philo *philo, const char *status, const char *color);
+/******************************************************************************/
+/*									FORK                                      */
+/******************************************************************************/
+int			check_and_unlock_left(t_philo *philo);
+int			check_and_unlock_right(t_philo *philo);
+int			check_and_unlock(t_philo *philo);
+void		unlock_forks(t_philo *philo);
+
+/******************************************************************************/
+/*									DEAD                                      */
+/******************************************************************************/
 int			check_alive(t_philo *philo);
 int			check_dead(t_philo *philo);
+
+/******************************************************************************/
+/*									UTILS                                     */
+/******************************************************************************/
 int			ft_atoi(const char *str, int *error);
-void		unlock_forks(t_philo *philo);
+long long	current_time_in_ms(void);
+void		print_status(t_philo *philo, const char *status, const char *color);
+
+/******************************************************************************/
+/*									ROUTINE                                   */
+/******************************************************************************/
+void		*lone_philo_routine(t_philo *philo);
+void		*routine(void *data);
+
+/******************************************************************************/
+/*									RETURN                                    */
+/******************************************************************************/
 void		*ret_unlock_null(t_philo *philo);
-int			check_and_unlock(t_philo *philo);
 void		*ret_lone_philo(t_philo *philo);
+
+/******************************************************************************/
+/*									DATA                                      */
+/******************************************************************************/
+int			init_data(t_data *data, int argc, char **argv);
 
 #endif
