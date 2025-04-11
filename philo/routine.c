@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   routine.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tarini <tarini@student.42.fr>              +#+  +:+       +#+        */
+/*   By: stafpec <stafpec@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 15:09:54 by stafpec           #+#    #+#             */
-/*   Updated: 2025/03/28 19:16:23 by tarini           ###   ########.fr       */
+/*   Updated: 2025/04/11 13:48:17 by stafpec          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,21 +106,16 @@ void	*routine(void *arg)
 	while (philo->data->num_times_each_philosopher_must_eat <= 0
 		|| philo->times_ate < philo->data->num_times_each_philosopher_must_eat)
 	{
-		pthread_mutex_lock(&philo->data->mutex);
 		if (philo->data->is_dead || philo->data->philosophers_dead[philo->id])
-			return (ret_unlock_null(philo));
-		pthread_mutex_unlock(&philo->data->mutex);
+			return (NULL);
 		if (!check_alive(philo))
 		{
-			pthread_mutex_lock(&philo->data->mutex);
 			philo->data->is_dead = true;
-			return (ret_unlock_null(philo));
+			return (NULL);
 		}
 		if (eat_sleep_routine(philo) == EXIT_FAILURE)
 			return (NULL);
 	}
-	pthread_mutex_lock(&philo->data->mutex);
 	philo->data->philosophers_dead[philo->id] = true;
-	pthread_mutex_unlock(&philo->data->mutex);
 	return (NULL);
 }

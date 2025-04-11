@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   init.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tarini <tarini@student.42.fr>              +#+  +:+       +#+        */
+/*   By: stafpec <stafpec@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 14:28:34 by stafpec           #+#    #+#             */
-/*   Updated: 2025/03/28 19:15:11 by tarini           ###   ########.fr       */
+/*   Updated: 2025/04/11 13:25:31 by stafpec          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,8 @@ int	allocate_resources(t_data *data)
 		free(data->philosophers);
 		free(data->forks);
 		return (EXIT_FAILURE);
-	}
+    }
+	//securise les memset
 	memset(data->forks, 0, sizeof(pthread_mutex_t) * data->num_philosophers);
 	memset(data->philosophers_dead, 0, sizeof(bool) * data->num_philosophers);
 	return (EXIT_SUCCESS);
