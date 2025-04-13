@@ -6,7 +6,7 @@
 /*   By: tarini <tarini@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 16:46:20 by stafpec           #+#    #+#             */
-/*   Updated: 2025/03/27 17:27:24 by tarini           ###   ########.fr       */
+/*   Updated: 2025/04/13 18:43:50 by tarini           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,12 +15,6 @@
 void	*ret_lone_philo(t_philo *philo)
 {
 	lone_philo_routine(philo);
-	return (NULL);
-}
-
-void	*ret_unlock_null(t_philo *philo)
-{
-	pthread_mutex_unlock(&philo->data->mutex);
 	return (NULL);
 }
 
@@ -42,9 +36,7 @@ void	print_status(t_philo *philo, const char *status, const char *color)
 {
 	long long	timestamp_ms;
 
-	pthread_mutex_lock(&philo->data->mutex);
 	timestamp_ms = current_time_in_ms() - philo->data->start_time;
 	printf("%s%lld %d %s%s\n", color, timestamp_ms, philo->id + 1,
 		status, RESET);
-	pthread_mutex_unlock(&philo->data->mutex);
 }

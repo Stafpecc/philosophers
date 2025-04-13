@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   routine.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: stafpec <stafpec@student.42.fr>            +#+  +:+       +#+        */
+/*   By: tarini <tarini@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 15:09:54 by stafpec           #+#    #+#             */
-/*   Updated: 2025/04/11 13:48:17 by stafpec          ###   ########.fr       */
+/*   Updated: 2025/04/13 16:24:57 by tarini           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,10 +49,8 @@ static void	eat(t_philo *philo)
 		return ;
 	}
 	print_status(philo, "is eating", ORANGE);
-	pthread_mutex_lock(&philo->data->mutex);
 	philo->last_meal_time = current_time_in_ms();
 	philo->times_ate++;
-	pthread_mutex_unlock(&philo->data->mutex);
 	start_time = current_time_in_ms();
 	while (current_time_in_ms() - start_time < philo->data->time_to_eat)
 	{
@@ -90,6 +88,7 @@ static int	eat_sleep_routine(t_philo *philo)
 		return (EXIT_FAILURE);
 	eat(philo);
 	sleep_philo(philo);
+	usleep(philo->id * 100);
 	if (check_dead(philo) || !check_alive(philo))
 		return (EXIT_FAILURE);
 	print_status(philo, "is thinking", GREEN);
@@ -103,9 +102,12 @@ void	*routine(void *arg)
 	philo = (t_philo *)arg;
 	if (philo->data->num_philosophers == 1)
 		return (ret_lone_philo(philo));
+	print_status(philo, "is thinking", GREEN);
+	usleep(philo->id * 100);
 	while (philo->data->num_times_each_philosopher_must_eat <= 0
 		|| philo->times_ate < philo->data->num_times_each_philosopher_must_eat)
 	{
+		usleep(philo->id * 100);
 		if (philo->data->is_dead || philo->data->philosophers_dead[philo->id])
 			return (NULL);
 		if (!check_alive(philo))

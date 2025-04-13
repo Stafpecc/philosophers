@@ -6,7 +6,7 @@
 /*   By: tarini <tarini@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/17 16:48:05 by tarini            #+#    #+#             */
-/*   Updated: 2025/03/28 19:15:49 by tarini           ###   ########.fr       */
+/*   Updated: 2025/04/13 18:42:55 by tarini           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,8 +43,6 @@ static void	free_data(t_data *data)
 		i++;
 	}
 	free(data->forks);
-	pthread_mutex_destroy(&data->mutex);
-	pthread_mutex_destroy(&data->death_mutex);
 	free(data->philosophers_dead);
 	free(data->philosophers);
 }

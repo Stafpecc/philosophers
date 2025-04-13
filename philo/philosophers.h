@@ -6,7 +6,7 @@
 /*   By: tarini <tarini@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/17 20:00:28 by tarini            #+#    #+#             */
-/*   Updated: 2025/03/28 19:15:59 by tarini           ###   ########.fr       */
+/*   Updated: 2025/04/13 18:43:29 by tarini           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,8 +57,6 @@ typedef struct s_data
 	bool			is_dead;
 	unsigned long	start_time;
 	pthread_mutex_t	*forks;
-	pthread_mutex_t	mutex;
-	pthread_mutex_t	death_mutex;
 	t_philo			*philosophers;
 	bool			*philosophers_dead;
 }	t_data;
