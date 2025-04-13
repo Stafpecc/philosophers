@@ -38,7 +38,7 @@ RM_DIR			= rm -rf
 CC				= cc
 MAKE			= make
 
-CFLAGS 			= -Wall -Wextra -Werror -g3
+CFLAGS 			= -Wall -Wextra -Werror
 CFSIGSEV        = -fsanitize=address
 THREADCFLAGS    = -lpthread
 PURPLE          = \033[1;35m
