@@ -6,7 +6,7 @@
 /*   By: tarini <tarini@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 14:28:34 by stafpec           #+#    #+#             */
-/*   Updated: 2025/04/13 20:09:06 by tarini           ###   ########.fr       */
+/*   Updated: 2025/04/14 16:29:51 by tarini           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,11 @@ void	init_mutexes(t_data *data)
 		pthread_mutex_init(&data->forks[i], NULL);
 		i++;
 	}
+	pthread_mutex_init(&data->print_mutex, NULL);
+	pthread_mutex_init(&data->death_mutex, NULL);
+	pthread_mutex_init(&data->state_mutex, NULL);
 }
+
 
 void	init_philosophers(t_data *data)
 {
@@ -87,6 +91,7 @@ void	init_philosophers(t_data *data)
 		data->philosophers[i].left_fork = &data->forks[i];
 		data->philosophers[i].right_fork = &data->forks[(i + 1)
 			% data->num_philosophers];
+		data->philosophers[i].print_mutex = &data->print_mutex;
 		i++;
 	}
 }

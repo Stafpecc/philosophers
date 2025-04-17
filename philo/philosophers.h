@@ -6,7 +6,7 @@
 /*   By: tarini <tarini@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/17 20:00:28 by tarini            #+#    #+#             */
-/*   Updated: 2025/04/13 20:11:01 by tarini           ###   ########.fr       */
+/*   Updated: 2025/04/14 16:22:16 by tarini           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,12 @@
 # define RED     "\x1b[31;4;1m"
 # define BROWN   "\x1b[33;2;3m"
 
+typedef enum e_bool
+{
+	DEAD,
+	ALIVE
+}	t_bool;
+
 typedef struct s_philo
 {
 	int				id;
@@ -44,6 +50,7 @@ typedef struct s_philo
 	pthread_t		thread;
 	pthread_mutex_t	*left_fork;
 	pthread_mutex_t	*right_fork;
+	pthread_mutex_t	*print_mutex;
 	struct s_data	*data;
 }	t_philo;
 
@@ -57,6 +64,9 @@ typedef struct s_data
 	bool			is_dead;
 	unsigned long	start_time;
 	pthread_mutex_t	*forks;
+	pthread_mutex_t	print_mutex;
+	pthread_mutex_t	death_mutex;
+	pthread_mutex_t	state_mutex;
 	t_philo			*philosophers;
 	bool			*philosophers_dead;
 }	t_data;
@@ -65,6 +75,9 @@ typedef struct s_data
 /*									FORK                                      */
 /******************************************************************************/
 void		unlock_forks(t_philo *philo);
+int			check_and_unlock_left(t_philo *philo);
+int			check_and_unlock_right(t_philo *philo);
+int			check_and_unlock(t_philo *philo);
 
 /******************************************************************************/
 /*									DEAD                                      */
@@ -78,6 +91,7 @@ int			check_dead(t_philo *philo);
 int			ft_atoi(const char *str, int *error);
 long long	current_time_in_ms(void);
 void		print_status(t_philo *philo, const char *status, const char *color);
+int			ft_strcmp(const char *s1, const char *s2);
 
 /******************************************************************************/
 /*									ROUTINE                                   */

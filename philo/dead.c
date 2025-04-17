@@ -3,39 +3,49 @@
 /*                                                        :::      ::::::::   */
 /*   dead.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tarini <tarini@student.42.fr>              +#+  +:+       +#+        */
+/*   By: stafpec <stafpec@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/23 15:41:47 by tarini            #+#    #+#             */
-/*   Updated: 2025/04/13 18:44:27 by tarini           ###   ########.fr       */
+/*   Updated: 2025/04/17 17:55:07 by stafpec          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosophers.h"
 
-int	check_alive(t_philo *philo)
+int check_alive(t_philo *philo)
 {
-	long	last_meal_time;
+	long last_meal_time;
 
-	last_meal_time = philo->last_meal_time;
+	pthread_mutex_lock(&philo->data->death_mutex);
+
 	if (philo->data->is_dead)
 	{
-		return (0);
+		pthread_mutex_unlock(&philo->data->death_mutex);
+		return (DEAD);
 	}
+
+	last_meal_time = philo->last_meal_time;
+
 	if (current_time_in_ms() - last_meal_time >= philo->data->time_to_die)
 	{
 		philo->data->philosophers_dead[philo->id] = true;
 		philo->data->is_dead = true;
+		pthread_mutex_unlock(&philo->data->death_mutex);
 		print_status(philo, "died", RED);
-		return (0);
+		return (DEAD);
 	}
-	return (1);
+
+	pthread_mutex_unlock(&philo->data->death_mutex);
+	return (ALIVE);
 }
 
 int	check_dead(t_philo *philo)
 {
 	int	dead;
 
+	pthread_mutex_lock(&philo->data->death_mutex);
 	dead = philo->data->is_dead;
+	pthread_mutex_unlock(&philo->data->death_mutex);
 	return (dead);
 }
 
