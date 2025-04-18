@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   routine.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: stafpec <stafpec@student.42.fr>            +#+  +:+       +#+        */
+/*   By: tarini <tarini@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 15:09:54 by stafpec           #+#    #+#             */
-/*   Updated: 2025/04/17 17:39:21 by stafpec          ###   ########.fr       */
+/*   Updated: 2025/04/18 16:54:38 by tarini           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,19 +97,17 @@ static int	eat_sleep_routine(t_philo *philo)
 
 void	*routine(void *arg)
 {
-	t_philo	*philo = (t_philo *)arg;
+	t_philo	*philo;
 
+	philo = (t_philo *)arg;
 	if (philo->data->num_philosophers == 1)
 		return (ret_lone_philo(philo));
-
 	print_status(philo, "is thinking", GREEN);
 	usleep(philo->id * 100);
-
 	while (philo->data->num_times_each_philosopher_must_eat <= 0
 		|| philo->times_ate < philo->data->num_times_each_philosopher_must_eat)
 	{
 		usleep(philo->id * 100);
-
 		pthread_mutex_lock(&philo->data->death_mutex);
 		if (philo->data->is_dead || philo->data->philosophers_dead[philo->id])
 		{
@@ -117,7 +115,6 @@ void	*routine(void *arg)
 			return (NULL);
 		}
 		pthread_mutex_unlock(&philo->data->death_mutex);
-
 		if (!check_alive(philo))
 		{
 			pthread_mutex_lock(&philo->data->death_mutex);
@@ -125,14 +122,11 @@ void	*routine(void *arg)
 			pthread_mutex_unlock(&philo->data->death_mutex);
 			return (NULL);
 		}
-
 		if (eat_sleep_routine(philo) == EXIT_FAILURE)
 			return (NULL);
 	}
-
 	pthread_mutex_lock(&philo->data->death_mutex);
 	philo->data->philosophers_dead[philo->id] = true;
 	pthread_mutex_unlock(&philo->data->death_mutex);
-
 	return (NULL);
 }

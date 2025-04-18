@@ -6,7 +6,7 @@
 /*   By: tarini <tarini@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 14:28:34 by stafpec           #+#    #+#             */
-/*   Updated: 2025/04/14 16:29:51 by tarini           ###   ########.fr       */
+/*   Updated: 2025/04/18 16:53:30 by tarini           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,6 @@ void	init_mutexes(t_data *data)
 	pthread_mutex_init(&data->death_mutex, NULL);
 	pthread_mutex_init(&data->state_mutex, NULL);
 }
-
 
 void	init_philosophers(t_data *data)
 {

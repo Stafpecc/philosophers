@@ -3,29 +3,26 @@
 /*                                                        :::      ::::::::   */
 /*   dead.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: stafpec <stafpec@student.42.fr>            +#+  +:+       +#+        */
+/*   By: tarini <tarini@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/23 15:41:47 by tarini            #+#    #+#             */
-/*   Updated: 2025/04/17 17:55:07 by stafpec          ###   ########.fr       */
+/*   Updated: 2025/04/18 16:53:07 by tarini           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosophers.h"
 
-int check_alive(t_philo *philo)
+int	check_alive(t_philo *philo)
 {
-	long last_meal_time;
+	long	last_meal_time;
 
 	pthread_mutex_lock(&philo->data->death_mutex);
-
 	if (philo->data->is_dead)
 	{
 		pthread_mutex_unlock(&philo->data->death_mutex);
 		return (DEAD);
 	}
-
 	last_meal_time = philo->last_meal_time;
-
 	if (current_time_in_ms() - last_meal_time >= philo->data->time_to_die)
 	{
 		philo->data->philosophers_dead[philo->id] = true;
@@ -34,7 +31,6 @@ int check_alive(t_philo *philo)
 		print_status(philo, "died", RED);
 		return (DEAD);
 	}
-
 	pthread_mutex_unlock(&philo->data->death_mutex);
 	return (ALIVE);
 }
