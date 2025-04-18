@@ -6,7 +6,7 @@
 /*   By: tarini <tarini@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/17 20:00:28 by tarini            #+#    #+#             */
-/*   Updated: 2025/04/14 16:22:16 by tarini           ###   ########.fr       */
+/*   Updated: 2025/04/18 17:21:37 by tarini           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,6 +84,8 @@ int			check_and_unlock(t_philo *philo);
 /******************************************************************************/
 int			check_alive(t_philo *philo);
 int			check_dead(t_philo *philo);
+void		*ret_lock_unlock(t_philo *philo);
+void		*ret_unlock(t_philo *philo);
 
 /******************************************************************************/
 /*									UTILS                                     */

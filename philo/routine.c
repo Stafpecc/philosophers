@@ -6,7 +6,7 @@
 /*   By: tarini <tarini@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 15:09:54 by stafpec           #+#    #+#             */
-/*   Updated: 2025/04/18 16:54:38 by tarini           ###   ########.fr       */
+/*   Updated: 2025/04/18 17:29:33 by tarini           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,7 @@ static void	eat(t_philo *philo)
 			unlock_forks(philo);
 			return ;
 		}
-		usleep(100);
+		usleep(10);
 	}
 	unlock_forks(philo);
 }
@@ -76,7 +76,7 @@ static void	sleep_philo(t_philo *philo)
 	{
 		if (check_dead(philo) || !check_alive(philo))
 			return ;
-		usleep(100);
+		usleep(10);
 	}
 }
 
@@ -88,7 +88,6 @@ static int	eat_sleep_routine(t_philo *philo)
 		return (EXIT_FAILURE);
 	eat(philo);
 	sleep_philo(philo);
-	usleep(philo->id * 100);
 	if (check_dead(philo) || !check_alive(philo))
 		return (EXIT_FAILURE);
 	print_status(philo, "is thinking", GREEN);
@@ -107,21 +106,12 @@ void	*routine(void *arg)
 	while (philo->data->num_times_each_philosopher_must_eat <= 0
 		|| philo->times_ate < philo->data->num_times_each_philosopher_must_eat)
 	{
-		usleep(philo->id * 100);
 		pthread_mutex_lock(&philo->data->death_mutex);
 		if (philo->data->is_dead || philo->data->philosophers_dead[philo->id])
-		{
-			pthread_mutex_unlock(&philo->data->death_mutex);
-			return (NULL);
-		}
+			return (ret_unlock(philo));
 		pthread_mutex_unlock(&philo->data->death_mutex);
 		if (!check_alive(philo))
-		{
-			pthread_mutex_lock(&philo->data->death_mutex);
-			philo->data->is_dead = true;
-			pthread_mutex_unlock(&philo->data->death_mutex);
-			return (NULL);
-		}
+			return (ret_lock_unlock(philo));
 		if (eat_sleep_routine(philo) == EXIT_FAILURE)
 			return (NULL);
 	}

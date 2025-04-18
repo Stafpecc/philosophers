@@ -6,7 +6,7 @@
 /*   By: tarini <tarini@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/23 15:41:47 by tarini            #+#    #+#             */
-/*   Updated: 2025/04/18 16:53:07 by tarini           ###   ########.fr       */
+/*   Updated: 2025/04/18 17:21:57 by tarini           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,5 +52,19 @@ void	*lone_philo_routine(t_philo *philo)
 	usleep(philo->data->time_to_die * 1000);
 	print_status(philo, "died", RED);
 	pthread_mutex_unlock(philo->left_fork);
+	return (NULL);
+}
+
+void	*ret_lock_unlock(t_philo *philo)
+{
+	pthread_mutex_lock(&philo->data->death_mutex);
+	philo->data->is_dead = true;
+	pthread_mutex_unlock(&philo->data->death_mutex);
+	return (NULL);
+}
+
+void	*ret_unlock(t_philo *philo)
+{
+	pthread_mutex_unlock(&philo->data->death_mutex);
 	return (NULL);
 }
