@@ -6,7 +6,7 @@
 /*   By: stafpec <stafpec@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/17 16:48:05 by tarini            #+#    #+#             */
-/*   Updated: 2025/04/19 14:53:34 by stafpec          ###   ########.fr       */
+/*   Updated: 2025/04/19 15:36:08 by stafpec          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,6 +88,11 @@ int	main(int argc, char **argv)
 	{
 		printf("%sError: invalid arguments%s\n", RED, RESET);
 		return (EXIT_FAILURE);
+	}
+	if (data.num_times_each_philosopher_must_eat == 0)
+	{
+		free_data(&data);
+		return (EXIT_SUCCESS);
 	}
 	free(data.philosophers_dead);
 	data.philosophers_dead = malloc(sizeof(bool) * data.num_philosophers);
