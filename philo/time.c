@@ -6,7 +6,7 @@
 /*   By: stafpec <stafpec@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/19 14:23:06 by stafpec           #+#    #+#             */
-/*   Updated: 2025/04/19 15:12:11 by stafpec          ###   ########.fr       */
+/*   Updated: 2025/04/19 15:19:57 by stafpec          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,29 +43,36 @@ void	custom_usleep(long duration, t_philo *philo)
 
 int	try_take_fork(int fork_id, t_philo *philo)
 {
-    long start_time;
-    long timeout = 50000;
+	long	start;
+	long	now;
+	bool	running;
 
-    start_time = current_time_in_ms();
-    while (1)
-    {
-        pthread_mutex_lock(&philo->data->forks_mutex);
-
-        if (philo->data->forks_available[fork_id])
-        {
-            philo->data->forks_available[fork_id] = false;
-            pthread_mutex_unlock(&philo->data->forks_mutex);
-            return (EXIT_SUCCESS);
-        }
-
-        pthread_mutex_unlock(&philo->data->forks_mutex);
-
-        if (!check_alive(philo))
-            return (EXIT_FAILURE);
-
-        if ((current_time_in_ms() - start_time) >= timeout)
-            return (EXIT_FAILURE);
-
-        usleep(100);
-    }
+	start = current_time_in_ms();
+	running = true;
+	while (running)
+	{
+		pthread_mutex_lock(&philo->data->forks_mutex);
+		if (philo->data->forks_available[fork_id])
+		{
+			philo->data->forks_available[fork_id] = false;
+			pthread_mutex_unlock(&philo->data->forks_mutex);
+			running = false;
+			return (EXIT_SUCCESS);
+		}
+		pthread_mutex_unlock(&philo->data->forks_mutex);
+		if (!check_alive(philo))
+		{
+			running = false;
+			return (EXIT_FAILURE);
+		}
+		now = current_time_in_ms();
+		if (now - start > 100)
+		{
+			running = false;
+			return (EXIT_FAILURE);
+		}
+		usleep(100);
+	}
+	return (EXIT_FAILURE);
 }
+

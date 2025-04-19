@@ -6,7 +6,7 @@
 /*   By: stafpec <stafpec@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 16:46:20 by stafpec           #+#    #+#             */
-/*   Updated: 2025/04/19 14:44:29 by stafpec          ###   ########.fr       */
+/*   Updated: 2025/04/19 15:28:42 by stafpec          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,16 +46,14 @@ void	print_status(t_philo *philo, const char *status, const char *color)
 
 	do_print = 0;
 	pthread_mutex_lock(&philo->data->death_mutex);
-	if (!philo->data->is_dead || (philo->data->is_dead && ft_strcmp(status,
-				"died") == 0))
+	if (!philo->data->is_dead || (philo->data->is_dead && ft_strcmp(status, "died") == 0))
 		do_print = 1;
 	pthread_mutex_unlock(&philo->data->death_mutex);
 	if (do_print)
 	{
-		timestamp_ms = current_time_in_ms() - philo->data->start_time;
 		pthread_mutex_lock(philo->print_mutex);
-		printf("%s%lld %d %s%s\n", color, timestamp_ms, philo->id + 1, status,
-			RESET);
+		timestamp_ms = current_time_in_ms() - philo->data->start_time;
+		printf("%s%lld %d %s%s\n", color, timestamp_ms, philo->id + 1, status, RESET);
 		pthread_mutex_unlock(philo->print_mutex);
 	}
 }
@@ -66,8 +64,6 @@ int	ft_strcmp(const char *s1, const char *s2)
 
 	i = 0;
 	while (s1[i] != '\0' && s2[i] != '\0' && s1[i] == s2[i])
-	{
 		i++;
-	}
 	return (s1[i] - s2[i]);
 }
