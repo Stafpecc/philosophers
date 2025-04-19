@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philosophers.h                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tarini <tarini@student.42.fr>              +#+  +:+       +#+        */
+/*   By: stafpec <stafpec@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/17 20:00:28 by tarini            #+#    #+#             */
-/*   Updated: 2025/04/18 17:21:37 by tarini           ###   ########.fr       */
+/*   Updated: 2025/04/19 15:11:32 by stafpec          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,20 +56,22 @@ typedef struct s_philo
 
 typedef struct s_data
 {
-	int				num_philosophers;
-	long			time_to_die;
-	long			time_to_eat;
-	long			time_to_sleep;
-	int				num_times_each_philosopher_must_eat;
-	bool			is_dead;
+    int				num_philosophers;
+    long			time_to_die;
+    long			time_to_eat;
+    long			time_to_sleep;
+    int				num_times_each_philosopher_must_eat;
 	unsigned long	start_time;
-	pthread_mutex_t	*forks;
+    bool			is_dead;
+    bool			*philosophers_dead;
+    bool			*forks_available;
 	pthread_mutex_t	print_mutex;
 	pthread_mutex_t	death_mutex;
-	pthread_mutex_t	state_mutex;
+    pthread_mutex_t	forks_mutex;
 	t_philo			*philosophers;
-	bool			*philosophers_dead;
-}	t_data;
+}   t_data;
+
+
 
 /******************************************************************************/
 /*									FORK                                      */
@@ -110,5 +112,12 @@ void		*ret_lone_philo(t_philo *philo);
 /*									DATA                                      */
 /******************************************************************************/
 int			init_data(t_data *data, int argc, char **argv);
+
+/******************************************************************************/
+/*									TIME                                      */
+/******************************************************************************/
+struct		timespec	get_timeout(long ms);
+int			try_take_fork(int fork_id, t_philo *philo);
+void		custom_usleep(long duration, t_philo *philo);
 
 #endif

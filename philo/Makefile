@@ -22,7 +22,8 @@ CFILES          = \
 		utils	  			\
 		dead	  			\
 		ft_atoi	  			\
-		check_and_unlock
+		check_and_unlock	\
+		time
 
 SRC				= $(patsubst %, %.c, $(CFILES))
 OBJS			= $(patsubst %.c, .objs/%.o, $(SRC))

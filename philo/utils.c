@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tarini <tarini@student.42.fr>              +#+  +:+       +#+        */
+/*   By: stafpec <stafpec@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 16:46:20 by stafpec           #+#    #+#             */
-/*   Updated: 2025/04/18 16:55:54 by tarini           ###   ########.fr       */
+/*   Updated: 2025/04/19 14:44:29 by stafpec          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,10 +18,17 @@ void	*ret_lone_philo(t_philo *philo)
 	return (NULL);
 }
 
-void	unlock_forks(t_philo *philo)
+void unlock_forks(t_philo *philo)
 {
-	pthread_mutex_unlock(philo->left_fork);
-	pthread_mutex_unlock(philo->right_fork);
+    int left;
+    int right;
+	
+	left = philo->id;
+	right = (philo->id + 1) % philo->data->num_philosophers;
+    pthread_mutex_lock(&philo->data->forks_mutex);
+    philo->data->forks_available[left]  = true;
+    philo->data->forks_available[right] = true;
+    pthread_mutex_unlock(&philo->data->forks_mutex);
 }
 
 long long	current_time_in_ms(void)

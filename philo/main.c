@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tarini <tarini@student.42.fr>              +#+  +:+       +#+        */
+/*   By: stafpec <stafpec@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/17 16:48:05 by tarini            #+#    #+#             */
-/*   Updated: 2025/04/18 17:32:50 by tarini           ###   ########.fr       */
+/*   Updated: 2025/04/19 14:53:34 by stafpec          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,22 +32,16 @@ before stopping\n", ORANGE, RESET);
 
 static void	free_data(t_data *data)
 {
-	int	i;
-
 	if (!data)
 		return ;
-	i = 0;
-	while (data->forks && i < data->num_philosophers)
-	{
-		pthread_mutex_destroy(&data->forks[i]);
-		i++;
-	}
 	pthread_mutex_destroy(&data->print_mutex);
 	pthread_mutex_destroy(&data->death_mutex);
-	free(data->forks);
+	pthread_mutex_destroy(&data->forks_mutex);
+	free(data->forks_available);
 	free(data->philosophers_dead);
 	free(data->philosophers);
 }
+
 
 static int	main_helper(t_data *data)
 {
@@ -69,7 +63,11 @@ static int	main_helper(t_data *data)
 	i = 0;
 	while (i < data->num_philosophers)
 	{
-		pthread_join(data->philosophers[i].thread, NULL);
+		if (pthread_join(data->philosophers[i].thread, NULL))
+		{
+			printf("%sError: failed to join thread %d%s\n", RED, i, RESET);
+			return (EXIT_FAILURE);
+		}
 		i++;
 	}
 	return (EXIT_SUCCESS);

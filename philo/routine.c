@@ -3,46 +3,49 @@
 /*                                                        :::      ::::::::   */
 /*   routine.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tarini <tarini@student.42.fr>              +#+  +:+       +#+        */
+/*   By: stafpec <stafpec@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 15:09:54 by stafpec           #+#    #+#             */
-/*   Updated: 2025/04/18 17:29:33 by tarini           ###   ########.fr       */
+/*   Updated: 2025/04/19 15:12:37 by stafpec          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosophers.h"
 
-static int	take_forks(t_philo *philo)
+static int take_forks(t_philo *philo)
 {
-	if (philo->id % 2 == 0)
-	{
-		pthread_mutex_lock(philo->left_fork);
-		if (check_and_unlock_left(philo))
-			return (EXIT_FAILURE);
-		print_status(philo, "has taken a fork", BROWN);
-		pthread_mutex_lock(philo->right_fork);
-		if (check_and_unlock(philo))
-			return (EXIT_FAILURE);
-		print_status(philo, "has taken a fork", BROWN);
-	}
-	else
-	{
-		pthread_mutex_lock(philo->right_fork);
-		if (check_and_unlock_right(philo))
-			return (EXIT_FAILURE);
-		print_status(philo, "has taken a fork", BROWN);
-		pthread_mutex_lock(philo->left_fork);
-		if (check_and_unlock(philo))
-			return (EXIT_FAILURE);
-		print_status(philo, "has taken a fork", BROWN);
-	}
-	return (EXIT_SUCCESS);
+    int left; 
+    int right;
+	
+	left = philo->id;
+	right = (philo->id + 1) % philo->data->num_philosophers;
+    if (philo->id % 2 == 0)
+    {
+        if (try_take_fork(left, philo)  ||  try_take_fork(right, philo))
+        {
+            pthread_mutex_lock(&philo->data->forks_mutex);
+            philo->data->forks_available[left] = true;
+            pthread_mutex_unlock(&philo->data->forks_mutex);
+            return (EXIT_FAILURE);
+        }
+    }
+    else
+    {
+        if (try_take_fork(right, philo) ||  try_take_fork(left, philo))
+        {
+            pthread_mutex_lock(&philo->data->forks_mutex);
+            philo->data->forks_available[right] = true;
+            pthread_mutex_unlock(&philo->data->forks_mutex);
+            return (EXIT_FAILURE);
+        }
+    }
+    print_status(philo, "has taken a fork", BROWN);
+    print_status(philo, "has taken a fork", BROWN);
+    return (EXIT_SUCCESS);
 }
 
 static void	eat(t_philo *philo)
 {
-	long	start_time;
-
 	if (!check_alive(philo))
 	{
 		unlock_forks(philo);
@@ -51,33 +54,16 @@ static void	eat(t_philo *philo)
 	print_status(philo, "is eating", ORANGE);
 	philo->last_meal_time = current_time_in_ms();
 	philo->times_ate++;
-	start_time = current_time_in_ms();
-	while (current_time_in_ms() - start_time < philo->data->time_to_eat)
-	{
-		if (check_dead(philo) || !check_alive(philo))
-		{
-			unlock_forks(philo);
-			return ;
-		}
-		usleep(10);
-	}
+	custom_usleep(philo->data->time_to_eat, philo);
 	unlock_forks(philo);
 }
 
 static void	sleep_philo(t_philo *philo)
 {
-	long	start_time;
-
 	if (check_dead(philo) || !check_alive(philo))
 		return ;
 	print_status(philo, "is sleeping", BLUE);
-	start_time = current_time_in_ms();
-	while (current_time_in_ms() - start_time < philo->data->time_to_sleep)
-	{
-		if (check_dead(philo) || !check_alive(philo))
-			return ;
-		usleep(10);
-	}
+	custom_usleep(philo->data->time_to_sleep, philo);
 }
 
 static int	eat_sleep_routine(t_philo *philo)
@@ -102,6 +88,8 @@ void	*routine(void *arg)
 	if (philo->data->num_philosophers == 1)
 		return (ret_lone_philo(philo));
 	print_status(philo, "is thinking", GREEN);
+	if (philo->id % 2 == 1)
+		usleep((philo->data->time_to_eat / 2) * 1000);
 	usleep(philo->id * 100);
 	while (philo->data->num_times_each_philosopher_must_eat <= 0
 		|| philo->times_ate < philo->data->num_times_each_philosopher_must_eat)
@@ -120,3 +108,4 @@ void	*routine(void *arg)
 	pthread_mutex_unlock(&philo->data->death_mutex);
 	return (NULL);
 }
+
