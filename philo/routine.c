@@ -6,46 +6,16 @@
 /*   By: stafpec <stafpec@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 15:09:54 by stafpec           #+#    #+#             */
-/*   Updated: 2025/04/19 15:12:37 by stafpec          ###   ########.fr       */
+/*   Updated: 2025/04/20 14:06:46 by stafpec          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosophers.h"
 
-static int take_forks(t_philo *philo)
-{
-    int left; 
-    int right;
-	
-	left = philo->id;
-	right = (philo->id + 1) % philo->data->num_philosophers;
-    if (philo->id % 2 == 0)
-    {
-        if (try_take_fork(left, philo)  ||  try_take_fork(right, philo))
-        {
-            pthread_mutex_lock(&philo->data->forks_mutex);
-            philo->data->forks_available[left] = true;
-            pthread_mutex_unlock(&philo->data->forks_mutex);
-            return (EXIT_FAILURE);
-        }
-    }
-    else
-    {
-        if (try_take_fork(right, philo) ||  try_take_fork(left, philo))
-        {
-            pthread_mutex_lock(&philo->data->forks_mutex);
-            philo->data->forks_available[right] = true;
-            pthread_mutex_unlock(&philo->data->forks_mutex);
-            return (EXIT_FAILURE);
-        }
-    }
-    print_status(philo, "has taken a fork", BROWN);
-    print_status(philo, "has taken a fork", BROWN);
-    return (EXIT_SUCCESS);
-}
-
 static void	eat(t_philo *philo)
 {
+	long	start_time;
+
 	if (!check_alive(philo))
 	{
 		unlock_forks(philo);
@@ -54,16 +24,33 @@ static void	eat(t_philo *philo)
 	print_status(philo, "is eating", ORANGE);
 	philo->last_meal_time = current_time_in_ms();
 	philo->times_ate++;
-	custom_usleep(philo->data->time_to_eat, philo);
+	start_time = current_time_in_ms();
+	while (current_time_in_ms() - start_time < philo->data->time_to_eat)
+	{
+		if (check_dead(philo) || !check_alive(philo))
+		{
+			unlock_forks(philo);
+			return ;
+		}
+		usleep(50);
+	}
 	unlock_forks(philo);
 }
 
 static void	sleep_philo(t_philo *philo)
 {
+	long	start_time;
+
 	if (check_dead(philo) || !check_alive(philo))
 		return ;
 	print_status(philo, "is sleeping", BLUE);
-	custom_usleep(philo->data->time_to_sleep, philo);
+	start_time = current_time_in_ms();
+	while (current_time_in_ms() - start_time < philo->data->time_to_sleep)
+	{
+		if (check_dead(philo) || !check_alive(philo))
+			return ;
+		usleep(50);
+	}
 }
 
 static int	eat_sleep_routine(t_philo *philo)
@@ -108,4 +95,3 @@ void	*routine(void *arg)
 	pthread_mutex_unlock(&philo->data->death_mutex);
 	return (NULL);
 }
-

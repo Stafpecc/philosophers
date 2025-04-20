@@ -42,7 +42,7 @@ int	parse_arguments(t_data *data, int argc, char **argv)
 
 int	allocate_resources(t_data *data)
 {
-	int i;
+	int	i;
 
 	data->philosophers = malloc(sizeof(t_philo) * data->num_philosophers);
 	if (!data->philosophers)
@@ -53,12 +53,9 @@ int	allocate_resources(t_data *data)
 		free(data->philosophers);
 		return (EXIT_FAILURE);
 	}
-	i = 0;
-	while (i < data->num_philosophers)
-	{
+	i = -1;
+	while (++i < data->num_philosophers)
 		data->forks_available[i] = true;
-		i++;
-	}
 	data->philosophers_dead = malloc(sizeof(bool) * data->num_philosophers);
 	if (!data->philosophers_dead)
 	{
@@ -79,8 +76,8 @@ void	init_mutexes(t_data *data)
 
 void	init_philosophers(t_data *data)
 {
-	int i;
-	long now;
+	int		i;
+	long	now;
 
 	now = current_time_in_ms();
 	i = 0;
