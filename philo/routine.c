@@ -6,16 +6,43 @@
 /*   By: stafpec <stafpec@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 15:09:54 by stafpec           #+#    #+#             */
-/*   Updated: 2025/04/20 14:06:46 by stafpec          ###   ########.fr       */
+/*   Updated: 2025/04/21 19:24:18 by stafpec          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosophers.h"
 
+int	take_forks(t_philo *philo)
+{
+	int		left;
+	int		right;
+	bool	run;
+
+	run = true;
+	right = (philo->id + 1) % philo->data->num_philosophers;
+	left = philo->id;
+	while (run)
+	{
+		pthread_mutex_lock(&philo->data->forks_mutex);
+		if (philo->data->forks_available[left]
+			&& philo->data->forks_available[right])
+		{
+			philo->data->forks_available[left] = false;
+			philo->data->forks_available[right] = false;
+			pthread_mutex_unlock(&philo->data->forks_mutex);
+			print_status(philo, "has taken a fork", BROWN);
+			print_status(philo, "has taken a fork", BROWN);
+			run = false;
+			return (EXIT_SUCCESS);
+		}
+		pthread_mutex_unlock(&philo->data->forks_mutex);
+		usleep(10);
+	}
+	return (EXIT_FAILURE);
+}
+
 static void	eat(t_philo *philo)
 {
-	long	start_time;
-
 	if (!check_alive(philo))
 	{
 		unlock_forks(philo);
@@ -24,33 +51,17 @@ static void	eat(t_philo *philo)
 	print_status(philo, "is eating", ORANGE);
 	philo->last_meal_time = current_time_in_ms();
 	philo->times_ate++;
-	start_time = current_time_in_ms();
-	while (current_time_in_ms() - start_time < philo->data->time_to_eat)
-	{
-		if (check_dead(philo) || !check_alive(philo))
-		{
-			unlock_forks(philo);
-			return ;
-		}
-		usleep(50);
-	}
+	custom_usleep(philo->data->time_to_eat, philo);
 	unlock_forks(philo);
 }
 
 static void	sleep_philo(t_philo *philo)
 {
-	long	start_time;
-
 	if (check_dead(philo) || !check_alive(philo))
 		return ;
 	print_status(philo, "is sleeping", BLUE);
-	start_time = current_time_in_ms();
-	while (current_time_in_ms() - start_time < philo->data->time_to_sleep)
-	{
-		if (check_dead(philo) || !check_alive(philo))
-			return ;
-		usleep(50);
-	}
+	custom_usleep(philo->data->time_to_sleep, philo);
+	usleep(500);
 }
 
 static int	eat_sleep_routine(t_philo *philo)

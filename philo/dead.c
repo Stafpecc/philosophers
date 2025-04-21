@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   dead.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tarini <tarini@student.42.fr>              +#+  +:+       +#+        */
+/*   By: stafpec <stafpec@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/23 15:41:47 by tarini            #+#    #+#             */
-/*   Updated: 2025/04/18 17:21:57 by tarini           ###   ########.fr       */
+/*   Updated: 2025/04/21 19:03:03 by stafpec          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,11 +47,15 @@ int	check_dead(t_philo *philo)
 
 void	*lone_philo_routine(t_philo *philo)
 {
-	pthread_mutex_lock(philo->left_fork);
+	pthread_mutex_lock(&philo->data->forks_mutex);
+	philo->data->forks_available[philo->id] = false;
+	pthread_mutex_unlock(&philo->data->forks_mutex);
 	print_status(philo, "has taken a fork", BROWN);
 	usleep(philo->data->time_to_die * 1000);
 	print_status(philo, "died", RED);
-	pthread_mutex_unlock(philo->left_fork);
+	pthread_mutex_lock(&philo->data->forks_mutex);
+	philo->data->forks_available[philo->id] = true;
+	pthread_mutex_unlock(&philo->data->forks_mutex);
 	return (NULL);
 }
 

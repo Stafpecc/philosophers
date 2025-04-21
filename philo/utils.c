@@ -6,7 +6,7 @@
 /*   By: stafpec <stafpec@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 16:46:20 by stafpec           #+#    #+#             */
-/*   Updated: 2025/04/20 13:44:16 by stafpec          ###   ########.fr       */
+/*   Updated: 2025/04/21 19:04:34 by stafpec          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,8 +23,8 @@ void	unlock_forks(t_philo *philo)
 	int	left;
 	int	right;
 
-	left = philo->id;
 	right = (philo->id + 1) % philo->data->num_philosophers;
+	left = philo->id;
 	pthread_mutex_lock(&philo->data->forks_mutex);
 	philo->data->forks_available[left] = true;
 	philo->data->forks_available[right] = true;

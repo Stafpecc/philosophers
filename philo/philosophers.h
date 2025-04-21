@@ -6,7 +6,7 @@
 /*   By: stafpec <stafpec@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/17 20:00:28 by tarini            #+#    #+#             */
-/*   Updated: 2025/04/20 14:09:37 by stafpec          ###   ########.fr       */
+/*   Updated: 2025/04/21 18:44:55 by stafpec          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,8 +116,6 @@ int				init_data(t_data *data, int argc, char **argv);
 /******************************************************************************/
 /*									TIME                                      */
 /******************************************************************************/
-struct timespec	get_timeout(long ms);
-int				try_take_fork(int fork_id, t_philo *philo);
 void			custom_usleep(long duration, t_philo *philo);
 
 #endif
