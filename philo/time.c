@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   time.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: stafpec <stafpec@student.42.fr>            +#+  +:+       +#+        */
+/*   By: tarini <tarini@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/19 14:23:06 by stafpec           #+#    #+#             */
-/*   Updated: 2025/04/21 18:42:49 by stafpec          ###   ########.fr       */
+/*   Updated: 2025/04/22 18:09:58 by tarini           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,4 +23,12 @@ void	custom_usleep(long duration, t_philo *philo)
 			break ;
 		usleep(100);
 	}
+}
+
+long long	current_time_in_ms(void)
+{
+	struct timeval	tv;
+
+	gettimeofday(&tv, NULL);
+	return ((long long)tv.tv_sec * 1000 + tv.tv_usec / 1000);
 }

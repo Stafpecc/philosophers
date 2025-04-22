@@ -6,7 +6,7 @@
 /*   By: tarini <tarini@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/17 20:00:28 by tarini            #+#    #+#             */
-/*   Updated: 2025/04/22 15:43:58 by tarini           ###   ########.fr       */
+/*   Updated: 2025/04/22 18:51:42 by tarini           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,8 @@ typedef struct s_data
 	bool			*forks_available;
 	pthread_mutex_t	print_mutex;
 	pthread_mutex_t	death_mutex;
-	pthread_mutex_t	forks_mutex;
+	pthread_mutex_t	*forks_mutex;
+	pthread_mutex_t	forks_available_mutex;
 	t_philo			*philosophers;
 }	t_data;
 
@@ -90,7 +91,6 @@ void			*ret_unlock(t_philo *philo);
 /*									UTILS                                     */
 /******************************************************************************/
 int				ft_atoi(const char *str, int *error);
-long long		current_time_in_ms(void);
 void			print_status(t_philo *philo, const char *status,
 					const char *color);
 int				ft_strcmp(const char *s1, const char *s2);
@@ -115,5 +115,6 @@ int				init_data(t_data *data, int argc, char **argv);
 /*									TIME                                      */
 /******************************************************************************/
 void			custom_usleep(long duration, t_philo *philo);
+long long		current_time_in_ms(void);
 
 #endif

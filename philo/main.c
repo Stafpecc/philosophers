@@ -6,7 +6,7 @@
 /*   By: tarini <tarini@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/17 16:48:05 by tarini            #+#    #+#             */
-/*   Updated: 2025/04/22 15:44:32 by tarini           ###   ########.fr       */
+/*   Updated: 2025/04/22 19:03:09 by tarini           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,11 +32,19 @@ before stopping\n", ORANGE, RESET);
 
 static void	free_data(t_data *data)
 {
+	int	i;
+
 	if (!data)
 		return ;
+	if (data->forks_mutex)
+	{
+		i = 0;
+		while (i < data->num_philosophers)
+			pthread_mutex_destroy(&data->forks_mutex[i++]);
+		free(data->forks_mutex);
+	}
 	pthread_mutex_destroy(&data->print_mutex);
 	pthread_mutex_destroy(&data->death_mutex);
-	pthread_mutex_destroy(&data->forks_mutex);
 	free(data->forks_available);
 	free(data->philosophers_dead);
 	free(data->philosophers);
@@ -57,29 +65,29 @@ static int	print_ret(int nb, int i, char **argv)
 	return (EXIT_FAILURE);
 }
 
-static int	main_helper(t_data *data, char **argv)
+static int	main_helper(t_data *data, char **argv, int i)
 {
-	int	i;
-
-	i = 0;
-	while (i < data->num_philosophers)
-	{
+	while (++i < data->num_philosophers)
 		data->philosophers_dead[i] = false;
-		i++;
-	}
-	i = 0;
-	while (i < data->num_philosophers)
+	i = -1;
+	while (++i < data->num_philosophers)
 	{
-		pthread_create(&data->philosophers[i].thread, NULL, routine,
-			&data->philosophers[i]);
-		i++;
+		if (pthread_create(&data->philosophers[i].thread, NULL, routine,
+				&data->philosophers[i]) != 0)
+		{
+			while (--i >= 0)
+			{
+				if (pthread_join(data->philosophers[i].thread, NULL))
+					return (print_ret(1, i, argv));
+			}
+			return (print_ret(1, i, argv));
+		}
 	}
-	i = 0;
-	while (i < data->num_philosophers)
+	i = -1;
+	while (++i < data->num_philosophers)
 	{
 		if (pthread_join(data->philosophers[i].thread, NULL))
 			return (print_ret(1, i, argv));
-		i++;
 	}
 	return (EXIT_SUCCESS);
 }
@@ -87,6 +95,7 @@ static int	main_helper(t_data *data, char **argv)
 int	main(int argc, char **argv)
 {
 	t_data	data;
+	int		i;
 
 	if (argc < 5 || argc > 6)
 		return (print_ret(3, 0, argv));
@@ -104,7 +113,8 @@ int	main(int argc, char **argv)
 		free_data(&data);
 		return (EXIT_FAILURE);
 	}
-	if (main_helper(&data, argv) == EXIT_FAILURE)
+	i = -1;
+	if (main_helper(&data, argv, i) == EXIT_FAILURE)
 		return (EXIT_FAILURE);
 	free_data(&data);
 	return (EXIT_SUCCESS);

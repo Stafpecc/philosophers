@@ -3,20 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: stafpec <stafpec@student.42.fr>            +#+  +:+       +#+        */
+/*   By: tarini <tarini@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 16:46:20 by stafpec           #+#    #+#             */
-/*   Updated: 2025/04/21 19:04:34 by stafpec          ###   ########.fr       */
+/*   Updated: 2025/04/22 19:04:02 by tarini           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosophers.h"
-
-void	*ret_lone_philo(t_philo *philo)
-{
-	lone_philo_routine(philo);
-	return (NULL);
-}
 
 void	unlock_forks(t_philo *philo)
 {
@@ -25,18 +19,20 @@ void	unlock_forks(t_philo *philo)
 
 	right = (philo->id + 1) % philo->data->num_philosophers;
 	left = philo->id;
-	pthread_mutex_lock(&philo->data->forks_mutex);
+	pthread_mutex_lock(&philo->data->forks_available_mutex);
+	pthread_mutex_lock(&philo->data->forks_mutex[left]);
 	philo->data->forks_available[left] = true;
+	pthread_mutex_unlock(&philo->data->forks_mutex[left]);
+	pthread_mutex_lock(&philo->data->forks_mutex[right]);
 	philo->data->forks_available[right] = true;
-	pthread_mutex_unlock(&philo->data->forks_mutex);
+	pthread_mutex_unlock(&philo->data->forks_mutex[right]);
+	pthread_mutex_unlock(&philo->data->forks_available_mutex);
 }
 
-long long	current_time_in_ms(void)
+void	*ret_lone_philo(t_philo *philo)
 {
-	struct timeval	tv;
-
-	gettimeofday(&tv, NULL);
-	return ((long long)tv.tv_sec * 1000 + tv.tv_usec / 1000);
+	lone_philo_routine(philo);
+	return (NULL);
 }
 
 void	print_status(t_philo *philo, const char *status,

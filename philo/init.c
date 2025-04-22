@@ -63,15 +63,56 @@ int	allocate_resources(t_data *data)
 		free(data->forks_available);
 		return (EXIT_FAILURE);
 	}
+	data->forks_mutex = malloc(sizeof(pthread_mutex_t)
+			* data->num_philosophers);
+	if (!data->forks_mutex)
+	{
+		free(data->philosophers);
+		free(data->forks_available);
+		free(data->philosophers_dead);
+		return (EXIT_FAILURE);
+	}
 	memset(data->philosophers_dead, 0, sizeof(bool) * data->num_philosophers);
 	return (EXIT_SUCCESS);
 }
 
-void	init_mutexes(t_data *data)
+int	init_mutexes(t_data *data)
 {
-	pthread_mutex_init(&data->forks_mutex, NULL);
-	pthread_mutex_init(&data->print_mutex, NULL);
-	pthread_mutex_init(&data->death_mutex, NULL);
+	int	i;
+
+	if (pthread_mutex_init(&data->forks_available_mutex, NULL) != 0)
+	{
+		printf("Failed to initialize forks_available_mutex\n");
+		return (EXIT_FAILURE);
+	}
+	if (pthread_mutex_init(&data->print_mutex, NULL) != 0)
+	{
+		printf("Failed to initialize print_mutex\n");
+		pthread_mutex_destroy(&data->forks_available_mutex);
+		return (EXIT_FAILURE);
+	}
+	if (pthread_mutex_init(&data->death_mutex, NULL) != 0)
+	{
+		printf("Failed to initialize death_mutex\n");
+		pthread_mutex_destroy(&data->forks_available_mutex);
+		pthread_mutex_destroy(&data->print_mutex);
+		return (EXIT_FAILURE);
+	}
+	i = 0;
+	while (i < data->num_philosophers)
+	{
+		if (pthread_mutex_init(&data->forks_mutex[i], NULL) != 0)
+		{
+			printf("Failed to initialize forks_mutex[%d]\n", i);
+			while (--i >= 0)
+				pthread_mutex_destroy(&data->forks_mutex[i]);
+			pthread_mutex_destroy(&data->print_mutex);
+			pthread_mutex_destroy(&data->death_mutex);
+			return (EXIT_FAILURE);
+		}
+		i++;
+	}
+	return (EXIT_SUCCESS);
 }
 
 void	init_philosophers(t_data *data)
@@ -100,7 +141,8 @@ int	init_data(t_data *data, int argc, char **argv)
 	data->start_time = current_time_in_ms();
 	if (allocate_resources(data) == EXIT_FAILURE)
 		return (EXIT_FAILURE);
-	init_mutexes(data);
+	if (init_mutexes(data) == EXIT_FAILURE)
+		return (EXIT_FAILURE);
 	init_philosophers(data);
 	return (EXIT_SUCCESS);
 }
