@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philosophers.h                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tarini <tarini@student.42.fr>              +#+  +:+       +#+        */
+/*   By: stafpec <stafpec@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/17 20:00:28 by tarini            #+#    #+#             */
-/*   Updated: 2025/04/22 18:51:42 by tarini           ###   ########.fr       */
+/*   Updated: 2025/04/23 03:06:56 by stafpec          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,22 @@ typedef enum e_bool
 	ALIVE
 }	t_bool;
 
+typedef enum e_return
+{
+	RETURN_SUCCESS,
+	RETURN_FAILURE
+}	t_return;
+
+typedef enum e_rror
+{
+	PARSING,
+	ALLOC,
+	MUTEXES,
+	JOIN,
+	USER_ARGS,
+	CREATE
+}	t_error;
+
 typedef struct s_philo
 {
 	int				id;
@@ -74,9 +90,6 @@ typedef struct s_data
 /*									FORK                                      */
 /******************************************************************************/
 void			unlock_forks(t_philo *philo);
-int				check_and_unlock_left(t_philo *philo);
-int				check_and_unlock_right(t_philo *philo);
-int				check_and_unlock(t_philo *philo);
 int				take_forks(t_philo *philo);
 
 /******************************************************************************/
@@ -105,11 +118,13 @@ void			*routine(void *data);
 /*									RETURN                                    */
 /******************************************************************************/
 void			*ret_lone_philo(t_philo *philo);
+int				print_ret(int nb, int i, char **argv);
 
 /******************************************************************************/
 /*									DATA                                      */
 /******************************************************************************/
 int				init_data(t_data *data, int argc, char **argv);
+int				init_mutexes(t_data *data);
 
 /******************************************************************************/
 /*									TIME                                      */

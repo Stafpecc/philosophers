@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tarini <tarini@student.42.fr>              +#+  +:+       +#+        */
+/*   By: stafpec <stafpec@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/17 16:48:05 by tarini            #+#    #+#             */
-/*   Updated: 2025/04/22 19:03:09 by tarini           ###   ########.fr       */
+/*   Updated: 2025/04/23 03:13:28 by stafpec          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,72 +50,76 @@ static void	free_data(t_data *data)
 	free(data->philosophers);
 }
 
-static int	print_ret(int nb, int i, char **argv)
+int	print_ret(int nb, int i, char **argv)
 {
-	if (nb == 1)
-		printf("%sError: failed to join thread %d%s\n", RED, i, RESET);
-	else if (nb == 2)
+	if (nb == PARSING)
 		printf("%sError: invalid arguments%s\n", RED, RESET);
-	else if (nb == 3)
+	else if (nb == USER_ARGS)
 	{
-		printf("%sUsage: %s %s%s\
-		<number_of_philosophers>%s ", RED, argv[0], RESET, BLUE, RESET);
+		printf("%sUsage: %s %s<number_of_philosophers>%s ", RED,
+			argv[0], RESET, BLUE);
 		print_menu();
+		printf("%s\n", RESET);
 	}
-	return (EXIT_FAILURE);
+	else if (nb == ALLOC)
+		printf("%sError: memory allocation failed%s\n", RED, RESET);
+	else if (nb == CREATE)
+		printf("%sError: failed to create thread %d%s\n", RED, i, RESET);
+	else if (nb == JOIN)
+		printf("%sError: failed to join thread %d%s\n", RED, i, RESET);
+	return (RETURN_FAILURE);
 }
 
-static int	main_helper(t_data *data, char **argv, int i)
+static int	main_helper(t_data *data, char **argv)
 {
-	while (++i < data->num_philosophers)
+	int	i;
+
+	i = 0;
+	while (i < data->num_philosophers)
+	{
 		data->philosophers_dead[i] = false;
-	i = -1;
-	while (++i < data->num_philosophers)
+		i++;
+	}
+	i = 0;
+	while (i < data->num_philosophers)
 	{
 		if (pthread_create(&data->philosophers[i].thread, NULL, routine,
 				&data->philosophers[i]) != 0)
-		{
-			while (--i >= 0)
-			{
-				if (pthread_join(data->philosophers[i].thread, NULL))
-					return (print_ret(1, i, argv));
-			}
-			return (print_ret(1, i, argv));
-		}
+			return (print_ret(CREATE, i, argv));
+		i++;
 	}
-	i = -1;
-	while (++i < data->num_philosophers)
+	i = 0;
+	while (i < data->num_philosophers)
 	{
 		if (pthread_join(data->philosophers[i].thread, NULL))
-			return (print_ret(1, i, argv));
+			return (print_ret(JOIN, i, argv));
+		i++;
 	}
-	return (EXIT_SUCCESS);
+	return (RETURN_SUCCESS);
 }
 
 int	main(int argc, char **argv)
 {
 	t_data	data;
-	int		i;
 
 	if (argc < 5 || argc > 6)
-		return (print_ret(3, 0, argv));
-	if (init_data(&data, argc, argv) == EXIT_FAILURE)
-		return (print_ret(2, 0, argv));
+		return (print_ret(USER_ARGS, 0, argv));
+	if (init_data(&data, argc, argv) == RETURN_FAILURE)
+		return (RETURN_FAILURE);
 	if (data.num_times_each_philosopher_must_eat == 0)
 	{
 		free_data(&data);
-		return (EXIT_SUCCESS);
+		return (RETURN_SUCCESS);
 	}
 	free(data.philosophers_dead);
 	data.philosophers_dead = malloc(sizeof(bool) * data.num_philosophers);
 	if (!data.philosophers_dead)
 	{
 		free_data(&data);
-		return (EXIT_FAILURE);
+		return (RETURN_FAILURE);
 	}
-	i = -1;
-	if (main_helper(&data, argv, i) == EXIT_FAILURE)
-		return (EXIT_FAILURE);
+	if (main_helper(&data, argv) == RETURN_FAILURE)
+		return (RETURN_FAILURE);
 	free_data(&data);
-	return (EXIT_SUCCESS);
+	return (RETURN_SUCCESS);
 }

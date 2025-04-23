@@ -22,8 +22,9 @@ CFILES          = \
 		utils	  			\
 		dead	  			\
 		ft_atoi	  			\
-		check_and_unlock	\
-		time
+		time				\
+		take_forks			\
+		init_mutexes
 
 SRC				= $(patsubst %, %.c, $(CFILES))
 OBJS			= $(patsubst %.c, .objs/%.o, $(SRC))
